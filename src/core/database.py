@@ -1,10 +1,12 @@
 from collections.abc import Generator
+from contextlib import contextmanager
 
-from requests import session
 from sqlmodel import SQLModel, Session, create_engine
 
-from src.models import *
+from .models import *
 from .config import DB_URL
+
+from src.services.person_service import ApiPersonService
 
 
 class DatabaseManager:
@@ -22,10 +24,19 @@ class DatabaseManager:
         return {}
 
     def create_tables(self):
-        # Import models before create_all so metadata includes all tables.
         SQLModel.metadata.create_all(self.engine)
 
-    def get_session(self) -> Generator[Session, None, None]:
+    def create_demo_api_person(self):
+        with database_manager.session_context() as session:
+            person, created = ApiPersonService.bootstrap_demo_person(session)
+            if created:
+                print(
+                    "[startup] Demo ApiPerson created "
+                    f"\t**name='{person.name}' token='{person.token}'"
+                )
+
+    @contextmanager
+    def session_context(self) -> Generator[Session, None, None]:
         with Session(self.engine) as session:
             try:
                 yield session
@@ -34,3 +45,8 @@ class DatabaseManager:
 
 
 database_manager = DatabaseManager(DB_URL)
+
+
+def get_db_session() -> Generator[Session, None, None]:
+    with database_manager.session_context() as session:
+        yield session
