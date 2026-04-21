@@ -51,7 +51,7 @@ class PipefyGraphQLClient:
                 ],
             }
 
-        return self._decode_payload(response)
+        return self._decode_payload(response)        
 
     @staticmethod
     def _decode_payload(response: requests.Response) -> dict[str, Any]:
@@ -90,7 +90,3 @@ class PipefyResponseParser:
             "data": payload.get("data"),
             "errors": errors,
         }
-
-
-# Backward-compatible alias used by previous revisions.
-PipefyRequestClient = PipefyGraphQLClient
