@@ -1,5 +1,6 @@
 from collections.abc import Generator
 
+from requests import session
 from sqlmodel import SQLModel, Session, create_engine
 
 from src.models import *
@@ -20,13 +21,16 @@ class DatabaseManager:
             return {"check_same_thread": False}
         return {}
 
-    def create_tables(self) -> None:
+    def create_tables(self):
         # Import models before create_all so metadata includes all tables.
         SQLModel.metadata.create_all(self.engine)
 
     def get_session(self) -> Generator[Session, None, None]:
         with Session(self.engine) as session:
-            yield session
+            try:
+                yield session
+            finally:
+                session.close()
 
 
 database_manager = DatabaseManager(DB_URL)
