@@ -1,51 +1,71 @@
 ---
 name: api-payload-architecture
-description: 'Design clean API boundaries for Pipefy-style integrations with complex payloads. Use for Pydantic DTOs, class-based mapper architecture, internal-to-external translation, and strict Router-Service-Mapper separation without leaking external IDs in public contracts.'
-argument-hint: 'Which endpoint or use case needs internal DTO to Pipefy payload translation?'
+description: 'Design scalable API boundaries for Pipefy integration centered on 3 core endpoints (create card from pessoa data, delete by card ID, move card phase with final-phase signal). Use for Pydantic DTO contracts, Router-Service-Mapper separation, local runtime persistence, and future endpoint expansion without overengineering.'
+argument-hint: 'Which core endpoint are you implementing or extending: create, delete, or move phase?'
 ---
 
 # API Payload Architecture
 
 ## Outcome
-- Expose clean internal API contracts while hiding Pipefy payload complexity.
-- Keep mapping rules centralized and testable.
-- Preserve strict boundaries between HTTP, business logic, GraphQL building, and translation layers.
+- Expose clean internal contracts while hiding Pipefy-specific payload details.
+- Start from 3 essential endpoints and scale to new operations without breaking patterns.
+- Keep translation rules centralized, deterministic, and testable.
+- Preserve strict boundaries between Router, Service, Mapper, and GraphQL integration.
 
 ## When to Use
-- Pipefy field structure is complex or non-intuitive for API consumers.
-- You are creating or refactoring endpoints that should not expose external IDs.
-- You need consistent payload translation for create, update, or move operations.
+- You are implementing the foundational Pipefy endpoints:
+    - create card from Pessoa registration fields
+    - delete card by ID
+    - move card phase and return final-phase state when reached
+- You need DTO-first API contracts using internal language.
+- You need to keep room for additional endpoints with minimal refactor.
 
 ## Layer Responsibilities
-- Router layer validates HTTP input and returns HTTP responses.
-- Service layer orchestrates business rules and integration calls.
-- Mapper layer translates between internal DTOs and Pipefy GraphQL payloads.
+- Router: validates request DTOs, invokes service methods, returns response DTOs.
+- Service: orchestrates mapping, GraphQL execution, response interpretation, and local persistence during runtime.
+- Mapper: translates internal DTOs to provider payload and provider data to internal response DTOs.
+
+## Core Endpoint Contracts
+1. Create card endpoint
+- Input DTO mirrors Pessoa domain fields.
+- Service maps Pessoa fields to Pipefy fields, creates the card, and returns normalized internal response.
+
+2. Delete card endpoint
+- Input DTO contains card ID.
+- Service calls deletion flow and returns success/error normalized response.
+
+3. Move card endpoint
+- Input DTO contains card ID and destination phase.
+- Service moves card, then determines if card reached final phase.
+- Response must include final-phase flag (for example `is_final_phase: bool`).
 
 ## Required Architecture Pattern
 - Use a configurable mapper class, not scattered standalone mapper defs.
 - Use Pydantic models for public request and response DTOs.
 - Keep GraphQL query or mutation creation separate from payload mapping.
 - Keep GraphQL transport separate from both mapper and service logic.
-- Keep implementation simple enough for fast delivery, but scalable for new entities and operations.
-- Keep patterns uniform across modules without forcing strict boilerplate everywhere.
-- Allow standalone pure helper defs only when clearly reusable and not part of the core orchestration flow.
+- Keep service methods as focused defs that execute mapped operations (avoid unnecessary class layering).
+- Keep implementation intentionally simple: do not overbuild for early scope.
+- Allow standalone pure helper defs only when clearly reusable and not orchestration-critical.
 
 ## Procedure
-1. Define public DTOs as Pydantic models using internal domain language.
-2. Create a mapper class initialized with field map dictionaries.
-3. Add mapper methods for each translation direction and operation type.
-4. Build GraphQL operations in a dedicated builder class.
-5. Execute GraphQL requests in a dedicated client class.
-6. Keep service methods as orchestrators of validation, mapping, builder, client, and parser.
-7. Return only internal DTOs from service and router.
-8. Keep interfaces and naming consistent to maintain uniform code as modules evolve.
-9. Add tests for DTO validation, mapper determinism, and boundary compliance.
+1. Define request/response DTOs (Pydantic) for create, delete, and move endpoints.
+2. Define mapping dictionaries from internal Pessoa/domain fields to Pipefy field IDs.
+3. Implement mapper methods for:
+     - request DTO -> Pipefy variables payload
+     - Pipefy response -> internal response DTO
+4. Keep router minimal: validate DTO, call service, return DTO.
+5. In service, execute flow: map -> build GraphQL operation -> call client -> parse -> persist local runtime data -> return DTO.
+6. For move endpoint, compare destination/current phase with final phase reference and set final-phase flag in response.
+7. Keep naming and method signatures uniform so adding new endpoints follows same recipe.
+8. Add tests for DTO validation, mapper output determinism, and phase-finalization behavior.
 
 ## Decision Points
-- If external schema changes often, isolate all changes in mapper dictionaries.
-- If transformation has business rules, keep validation in service and formatting in mapper.
-- If state persistence is unnecessary, prefer stateless request-through mapping.
-- If an external field has no internal equivalent, handle it with mapper defaults, not public DTO leakage.
+- If Pipefy field IDs change, update only mapper dictionaries.
+- If business rule is workflow-specific (for example final phase semantics), keep it in service.
+- If a provider field has no internal equivalent, handle it in mapper defaults, never in public DTO.
+- If runtime persistence grows beyond lightweight needs, preserve service contract and swap storage implementation.
+- If new endpoints are added, reuse DTO + mapper + service composition before introducing new abstractions.
 
 ## Suggested Mapper Pattern
 ```python
@@ -94,6 +114,7 @@ class PipefyPayloadMapper:
 - Service calls GraphQL builder to produce `(query, variables)`.
 - Service calls GraphQL client to execute the request.
 - Service calls parser and mapper to produce public response DTO.
+- Service persists relevant runtime state in local DB.
 - Router returns DTO response without provider internals.
 
 ## Completion Checklist
@@ -104,7 +125,9 @@ class PipefyPayloadMapper:
 - Mapper is class-based, configurable by field map, and reusable across use cases.
 - Public DTOs are validated with Pydantic before integration calls.
 - Field translation is centralized in mapping dictionaries.
-- Core orchestration avoids arbitrary standalone defs.
+- Service persists runtime-relevant data in local DB where required by flow.
+- Move endpoint response includes final-phase information.
+- Core orchestration remains simple and avoids unnecessary abstractions.
 - Code style is uniform and readable without excessive rigidity.
 - Mapper tests validate both directions where applicable.
 

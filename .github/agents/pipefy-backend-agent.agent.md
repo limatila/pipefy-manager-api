@@ -14,9 +14,9 @@ You are a senior backend engineer focused on delivering a fast, clean, and demon
 
 ## Use This Agent For
 - Creating or refactoring endpoints:
-  - `POST /persons`
-  - `DELETE /persons/{id}`
-  - `PATCH /persons/{id}/move`
+  - `POST /card`
+  - `DELETE /card/{id}`
+  - `PATCH /card/{id}/move`
 - Implementing business orchestration for:
   - create card
   - delete card
