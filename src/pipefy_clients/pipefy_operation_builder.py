@@ -12,10 +12,9 @@ class PipefyOperationBuilder:
     @staticmethod
     def create_card(payload: CreateCardInput) -> tuple[str, dict[str, Any]]:
         query = """
-        mutation CreateCard($pipeId: ID!, $phaseId: ID!, $fieldsAttributes: [FieldValueInput!]!) {
+        mutation CreateCard($pipeId: ID!, $fieldsAttributes: [FieldValueInput!]!) {
           createCard(input: {
             pipe_id: $pipeId,
-            phase_id: $phaseId,
             fields_attributes: $fieldsAttributes
           }) {
             card {
@@ -35,7 +34,6 @@ class PipefyOperationBuilder:
         """
         variables = {
           "pipeId": payload.pipe_id,
-          "phaseId": payload.phase_id,
           "fieldsAttributes": payload.fields_attributes,
         }
         return query, variables

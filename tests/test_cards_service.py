@@ -86,8 +86,7 @@ class CardsServiceTests(unittest.TestCase):
 
             payload = CardCreateRequest(
                 name="Alice",
-                email="alice@example.com",
-                tax_id="123",
+                cpf="123",
                 phase_id="phase-1",
             )
             with patch("src.services.cards_service.get_pipefy_runtime_components", self._components):
