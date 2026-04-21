@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from src.core.database import get_db_session
 from src.models.persons import ApiPerson
 
-bearer_scheme = HTTPBearer(auto_error=True)
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_authenticated_person(
