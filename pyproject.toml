@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "dotenv>=0.9.9",
     "fastapi>=0.136.0",
+    "pytest>=9.0.3",
     "requests>=2.32.0",
     "sqlmodel>=0.0.38",
     "uvicorn>=0.44.0",
