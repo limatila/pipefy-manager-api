@@ -1,6 +1,7 @@
 from sqlmodel import Session, select
 
 from src.core.config import (
+    PIPEFY_TOKEN,
     PIPEFY_GRAPHQL_ENDPOINT,
     PIPEFY_GRAPHQL_TIMEOUT_SECONDS,
 )
@@ -33,11 +34,11 @@ class CardsService:
         return builder_cls
 
     @staticmethod
-    def _client_for_person(person: ApiPerson):
+    def _client():
         client_cls, _, _ = get_pipefy_runtime_components()
         return client_cls(
             endpoint=PIPEFY_GRAPHQL_ENDPOINT,
-            token=person.token,
+            token=PIPEFY_TOKEN,
             timeout=PIPEFY_GRAPHQL_TIMEOUT_SECONDS,
         )
 
@@ -55,7 +56,7 @@ class CardsService:
         payload: CardCreateRequest,
     ) -> CardCreateResponse:
         builder = self._builder_cls()
-        client = self._client_for_person(person)
+        client = self._client()
         create_input = self.mapper.to_create_card_input(payload)
 
         query, variables = builder.create_card(create_input)
@@ -67,6 +68,7 @@ class CardsService:
             raise ValueError("Pipefy did not return card data")
 
         current_phase = card_data.get("current_phase") or {}
+        
         record = session.exec(
             select(Card).where(Card.pipe_card_id == card_data["id"])
         ).first()
@@ -87,7 +89,7 @@ class CardsService:
         card_id: str,
     ) -> CardDeleteResponse:
         builder = self._builder_cls()
-        client = self._client_for_person(person)
+        client = self._client()
 
         query, variables = builder.delete_card(DeleteCardInput(card_id=card_id))
         normalized = self._normalize_response(client.execute(query, variables))
@@ -111,7 +113,7 @@ class CardsService:
         payload: CardMoveRequest,
     ) -> CardMoveResponse:
         builder = self._builder_cls()
-        client = self._client_for_person(person)
+        client = self._client()
 
         previous_record = session.exec(
             select(Card).where(Card.pipe_card_id == card_id)
