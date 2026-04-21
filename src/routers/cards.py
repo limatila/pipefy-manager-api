@@ -13,7 +13,7 @@ from src.dtos.cards import (
 from src.models.persons import ApiPerson
 from src.services.cards_service import CardsService
 
-router = APIRouter(prefix="/card", tags=["Pipefy Management"])
+router = APIRouter(prefix="/card", tags=["Card Management"])
 
 
 @router.post(

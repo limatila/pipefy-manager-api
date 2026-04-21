@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from .core.database import database_manager
-from .core.config import IS_CREATE_DEMO_API_STARTUP
+from .core.config import IS_CREATE_DEMO_API_STARTUP, PIPE_ID
 from .routers import cards_router
 
 
@@ -18,8 +18,11 @@ async def lifespan(app: FastAPI):
     # API runtime
     yield
 
-
-app = FastAPI(title="Pipefy Manager API", lifespan=lifespan)
+app_description = (
+    "API for managing cards in Pipefy, allowing you to create, update, and delete cards within a specific pipe."
+    f"\n - Active Pipe Id: {PIPE_ID}"
+)
+app = FastAPI(title="Pipefy Manager API", lifespan=lifespan, description=app_description)
 
 #* Routers
 app.include_router(cards_router)
