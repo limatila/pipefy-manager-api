@@ -1,6 +1,6 @@
 from sqlmodel import Field
 
-from core.models import BaseModel
+from src.core.models import BaseModel
 
 
 class CardRecord(BaseModel, table=True):

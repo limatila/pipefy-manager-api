@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Field, SQLModel
 
-from core.config import PROJECT_TZ
+from .config import PROJECT_TZ
 
 
 class BaseModel(SQLModel, table=False):

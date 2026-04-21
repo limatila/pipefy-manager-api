@@ -2,7 +2,8 @@ from collections.abc import Generator
 
 from sqlmodel import SQLModel, Session, create_engine
 
-from core.config import DB_URL
+from src.models import *
+from .config import DB_URL
 
 
 class DatabaseManager:
@@ -21,11 +22,6 @@ class DatabaseManager:
 
     def create_tables(self) -> None:
         # Import models before create_all so metadata includes all tables.
-        from models.api_users
-        import models.assignees
-        import models.cards
-        import models.persons
-
         SQLModel.metadata.create_all(self.engine)
 
     def get_session(self) -> Generator[Session, None, None]:
