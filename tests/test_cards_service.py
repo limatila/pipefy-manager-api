@@ -79,7 +79,7 @@ class CardsServiceTests(unittest.TestCase):
 
     def test_create_card_persists_local_record(self):
         with Session(self.engine) as session:
-            person = ApiPerson(name="demo", token="tok")
+            person = ApiPerson(name="demo", token="sec_token")
             session.add(person)
             session.commit()
             session.refresh(person)
@@ -100,7 +100,7 @@ class CardsServiceTests(unittest.TestCase):
 
     def test_delete_card_removes_local_record(self):
         with Session(self.engine) as session:
-            person = ApiPerson(name="demo", token="tok")
+            person = ApiPerson(name="demo", token="sec_token")
             card = Card(pipe_card_id="card-1", current_phase_id="phase-1", is_final_phase=False)
             session.add(person)
             session.add(card)
@@ -116,7 +116,7 @@ class CardsServiceTests(unittest.TestCase):
 
     def test_move_card_updates_phase_and_keeps_is_final_false(self):
         with Session(self.engine) as session:
-            person = ApiPerson(name="demo", token="tok")
+            person = ApiPerson(name="demo", token="sec_token")
             card = Card(pipe_card_id="card-1", current_phase_id="phase-1", is_final_phase=False)
             session.add(person)
             session.add(card)
