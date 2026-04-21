@@ -62,7 +62,6 @@ You are a senior backend engineer focused on delivering a fast, clean, and demon
 - Prioritized entities:
   1. API users: `id`, `token` (hash when feasible), `created_at`
   2. Local cards: `id`, `pipe_card_id`, `current_phase_id`, `created_at`
-  3. Persons (good signal): `id`, `name`, `email`, `pipe_card_id`
   4. Assignees (optional): `id`, `pipe_user_id`, `name`
 - Do not mirror full Pipefy payloads in local storage.
 

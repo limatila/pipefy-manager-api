@@ -72,14 +72,14 @@ argument-hint: 'Which core endpoint are you implementing or extending: create, d
 from typing import Any
 from pydantic import BaseModel, Field
 
-class CreatePersonCardRequest(BaseModel):
+class CreateCardRequest(BaseModel):
     title: str
     description: str | None = None
     tax_id: str
     phase_name: str | None = None
 
 
-class PersonCardResponse(BaseModel):
+class CardResponse(BaseModel):
     id: str
     title: str
     fields: dict[str, Any] = Field(default_factory=dict)
@@ -89,7 +89,7 @@ class PipefyPayloadMapper:
     def __init__(self, field_map: dict[str, str]):
         self.field_map = field_map
 
-    def to_pipefy_fields(self, dto: CreatePersonCardRequest) -> list[dict[str, Any]]:
+    def to_pipefy_fields(self, dto: CreateCardRequest) -> list[dict[str, Any]]:
         payload = dto.model_dump(exclude_none=True)
         translated: list[dict[str, Any]] = []
         for internal_key, external_key in self.field_map.items():
@@ -100,8 +100,8 @@ class PipefyPayloadMapper:
         return translated
 
 
-    def from_pipefy_card(self, card: dict[str, Any]) -> PersonCardResponse:
-        return PersonCardResponse(
+    def from_pipefy_card(self, card: dict[str, Any]) -> CardResponse:
+        return CardResponse(
             id=card["id"],
             title=card.get("title", ""),
             fields={item["name"]: item.get("value") for item in card.get("fields", [])},
