@@ -12,7 +12,6 @@ class BaseModel(SQLModel, table=False):
     __abstract__ = True
 
     id: int | None = Field(default=None, primary_key=True)
-    pipe_id: str = Field(nullable=False)
     date_created: datetime = Field(
         default_factory=lambda: datetime.now(PROJECT_TZ),
         nullable=False,

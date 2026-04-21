@@ -61,9 +61,9 @@ You are a senior backend engineer focused on delivering a fast, clean, and demon
 - Persist only what is useful for traceability and minimal business logic.
 - Prioritized entities:
   1. API users: `id`, `token` (hash when feasible), `created_at`
-  2. Local cards: `id`, `pipefy_card_id`, `current_phase_id`, `created_at`
-  3. Persons (good signal): `id`, `name`, `email`, `pipefy_card_id`
-  4. Assignees (optional): `id`, `pipefy_user_id`, `name`
+  2. Local cards: `id`, `pipe_card_id`, `current_phase_id`, `created_at`
+  3. Persons (good signal): `id`, `name`, `email`, `pipe_card_id`
+  4. Assignees (optional): `id`, `pipe_user_id`, `name`
 - Do not mirror full Pipefy payloads in local storage.
 
 ## Non-goals
