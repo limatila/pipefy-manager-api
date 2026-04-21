@@ -1,0 +1,4 @@
+
+PIPEFY_FIELD_ID_NAME = "nome"
+PIPEFY_FIELD_ID_TAX_ID = "cpf"
+PIPEFY_FIELD_ID_CITY = 'cidade'

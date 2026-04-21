@@ -1,17 +1,20 @@
+from fastapi.exceptions import HTTPException
+
 from src.core.config import (
     PIPE_ID,
 )
-from src.gql_response_mappers.dtos.cards import CreateCardInput
 from src.dtos.cards import (
     CardCreateRequest,
     CardCreateResponse,
     CardDeleteResponse,
     CardMoveResponse,
 )
-
-PIPEFY_FIELD_ID_NAME = "name"
-PIPEFY_FIELD_ID_EMAIL = "email"
-PIPEFY_FIELD_ID_TAX_ID = "tax_id"
+from src.gql_response_mappers.dtos.cards import CreateCardInput
+from src.gql_response_mappers.fields.cards import (
+    PIPEFY_FIELD_ID_NAME,
+    PIPEFY_FIELD_ID_TAX_ID,
+    PIPEFY_FIELD_ID_CITY
+)
 
 
 class CardsMapper:
@@ -19,15 +22,15 @@ class CardsMapper:
         self.pipe_id = PIPE_ID
         self.field_map = {
             "name": PIPEFY_FIELD_ID_NAME,
-            "email": PIPEFY_FIELD_ID_EMAIL,
             "tax_id": PIPEFY_FIELD_ID_TAX_ID,
+            "city": PIPEFY_FIELD_ID_CITY
         }
 
-    def to_create_card_input(self, payload: CardCreateRequest) -> CreateCardInput:
+    def get_fields_attributes(self, payload: CardCreateRequest):
         raw_fields = {
             "name": payload.name,
-            "email": payload.email,
-            "tax_id": payload.tax_id,
+            "tax_id": payload.cpf,
+            "city": payload.cidade,
         }
 
         fields_attributes: list[dict[str, str]] = []
@@ -35,14 +38,19 @@ class CardsMapper:
             value = raw_fields.get(source_key)
             if value is None:
                 continue
+            
             fields_attributes.append(
                 {"field_id": target_field_id, "field_value": value}
             )
+        
+        return fields_attributes
+
+    def to_create_card_input(self, payload: CardCreateRequest) -> CreateCardInput:
 
         return CreateCardInput(
             pipe_id=self.pipe_id,
             phase_id=payload.phase_id,
-            fields_attributes=fields_attributes,
+            fields_attributes=self.get_fields_attributes(payload),
         )
 
     @staticmethod

@@ -24,7 +24,7 @@ def get_authenticated_person(
     if person is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Invalid, not found token",
         )
 
     return person
