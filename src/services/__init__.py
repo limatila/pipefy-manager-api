@@ -1,3 +1,7 @@
-from services.person_cards_service import PersonCardsService
+from src.services.person_service import ApiPersonService
+from src.services.cards_service import CardsService
 
-__all__ = ["PersonCardsService"]
+__all__ = [
+	"ApiPersonService",
+	"CardsService",
+]
