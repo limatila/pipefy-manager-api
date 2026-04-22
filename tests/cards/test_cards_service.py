@@ -28,6 +28,10 @@ class _FakeBuilder:
     def move_card_to_phase(payload):
         return "move", {"cardId": payload.card_id}
 
+    @staticmethod
+    def fetch_pipe_phases(payload):
+        return "phases", {"pipeId": payload.pipe_id}
+
 
 class _FakeClient:
     def __init__(self, endpoint, token, timeout):
@@ -60,6 +64,20 @@ class _FakeClient:
                             "id": variables["cardId"],
                             "current_phase": {"id": "phase-2", "name": "Fase 2"},
                         }
+                    }
+                },
+                "errors": [],
+            }
+
+        if query == "phases":
+            return {
+                "data": {
+                    "pipe": {
+                        "phases": [
+                            {"id": "phase-1", "name": "Fase 1"},
+                            {"id": "phase-2", "name": "Fase 2"},
+                            {"id": "phase-final", "name": "Fase Final"},
+                        ]
                     }
                 },
                 "errors": [],

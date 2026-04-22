@@ -2,10 +2,11 @@ from sqlmodel import Session, select
 
 from src.core.config import (
     PIPEFY_TOKEN,
+    PIPE_ID,
     PIPEFY_GRAPHQL_ENDPOINT,
     PIPEFY_GRAPHQL_TIMEOUT_SECONDS,
 )
-from src.gql_response_mappers.dtos.cards import DeleteCardInput, MoveCardToPhaseInput
+from src.gql_response_mappers.dtos.cards import DeleteCardInput, FetchPipePhasesInput, MoveCardToPhaseInput
 from src.dtos.cards import (
     CardCreateRequest,
     CardCreateResponse,
@@ -133,8 +134,13 @@ class CardsService:
         current_phase = moved_card.get("current_phase") if moved_card else {}
         current_phase_id = current_phase.get("id") if isinstance(current_phase, dict) else None
 
-        # Dynamic final-phase detection is intentionally deferred until builder supports fetch_pipe_phases.
-        is_final_phase = False
+        phases_query, phases_variables = builder.fetch_pipe_phases(
+            FetchPipePhasesInput(pipe_id=PIPE_ID)
+        )
+        phases_result = self._normalize_response(client.execute(phases_query, phases_variables))
+        phases = ((phases_result.get("data") or {}).get("pipe") or {}).get("phases") or []
+        final_phase_id = phases[-1]["id"] if phases else None
+        is_final_phase = bool(current_phase_id and final_phase_id and current_phase_id == final_phase_id)
 
         if moved:
             if previous_record is None:

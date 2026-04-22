@@ -39,7 +39,7 @@ uv sync
 # Pipefy Identification
 PIPEFY_TOKEN=SECRET_TOKEN
 PIPE_ID=123456789
-
+```
 
 4. Run in module mode
 ```bash

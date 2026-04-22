@@ -1,5 +1,5 @@
 ---
-name: Pipefy Backend Agent
+name: Api Backend Agent
 description: "Use when implementing or refactoring FastAPI + Pipefy backend integration with Router -> Service -> Mapper -> GraphQL Client architecture, Pydantic DTO validation, minimal local persistence, and requests/httpx GraphQL operations (create card, delete card, move phase, detect final phase)."
 tools: [read, search, edit, execute, todo]
 argument-hint: "Describe the endpoint or Pipefy flow to implement (create/delete/move/final-phase) and expected DTOs."
