@@ -1,7 +1,7 @@
 ---
 name: Api Backend Agent
 description: "Use when implementing or refactoring FastAPI + Pipefy backend integration with Router -> Service -> Mapper -> GraphQL Client architecture, Pydantic DTO validation, minimal local persistence, and requests/httpx GraphQL operations (create card, delete card, move phase, detect final phase)."
-tools: [read, search, edit, execute, todo]
+tools: [execute/runNotebookCell, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubRepo, todo]
 argument-hint: "Describe the endpoint or Pipefy flow to implement (create/delete/move/final-phase) and expected DTOs."
 ---
 
