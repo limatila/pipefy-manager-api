@@ -5,7 +5,7 @@ from sqlmodel import Session, SQLModel, create_engine, select
 
 from src.dtos.cards import CardCreateRequest, CardMoveRequest
 from src.models.cards import Card
-from src.models.persons import ApiPerson
+from src.models.api_persons import ApiPerson
 from src.services.cards_service import CardsService
 
 
@@ -107,7 +107,7 @@ class CardsServiceTests(unittest.TestCase):
                 cpf="123",
                 phase_id="phase-1",
             )
-            with patch("src.services.cards_service.get_pipefy_runtime_components", self._components):
+            with patch("src.core.service.get_pipefy_runtime_components", self._components):
                 response = self.service.create_card(session=session, person=person, payload=payload)
 
             self.assertEqual("card-1", response.card_id)
@@ -124,7 +124,7 @@ class CardsServiceTests(unittest.TestCase):
             session.commit()
             session.refresh(person)
 
-            with patch("src.services.cards_service.get_pipefy_runtime_components", self._components):
+            with patch("src.core.service.get_pipefy_runtime_components", self._components):
                 response = self.service.delete_card(session=session, person=person, card_id="card-1")
 
             self.assertTrue(response.deleted)
@@ -140,7 +140,7 @@ class CardsServiceTests(unittest.TestCase):
             session.commit()
             session.refresh(person)
 
-            with patch("src.services.cards_service.get_pipefy_runtime_components", self._components):
+            with patch("src.core.service.get_pipefy_runtime_components", self._components):
                 response = self.service.move_card_to_phase(
                     session=session,
                     person=person,

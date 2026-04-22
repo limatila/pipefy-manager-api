@@ -6,7 +6,7 @@ from sqlmodel import SQLModel, Session, create_engine
 from .models import *
 from .config import DB_URL
 
-from src.services.person_service import ApiPersonService
+from src.services.api_person_service import ApiPersonService
 
 
 class DatabaseManager:

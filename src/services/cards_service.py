@@ -1,11 +1,6 @@
 from sqlmodel import Session, select
 
-from src.core.config import (
-    PIPEFY_TOKEN,
-    PIPE_ID,
-    PIPEFY_GRAPHQL_ENDPOINT,
-    PIPEFY_GRAPHQL_TIMEOUT_SECONDS,
-)
+from src.core.service import BaseService
 from src.gql_response_mappers.dtos.cards import DeleteCardInput, FetchPipePhasesInput, MoveCardToPhaseInput
 from src.dtos.cards import (
     CardCreateRequest,
@@ -16,39 +11,12 @@ from src.dtos.cards import (
 )
 from src.gql_response_mappers.cards_mapper import CardsMapper
 from src.models.cards import Card
-from src.models.persons import ApiPerson
-from src.middleware.pipefy_runtime import get_pipefy_runtime_components
+from src.models.api_persons import ApiPerson
 
 
-class CardsService:
+class CardsService(BaseService):
     def __init__(self, mapper: CardsMapper | None = None):
         self.mapper = mapper or CardsMapper()
-
-    @staticmethod
-    def _normalize_response(payload: dict) -> dict:
-        _, parser_cls, _ = get_pipefy_runtime_components()
-        return parser_cls.normalize(payload)
-
-    @staticmethod
-    def _builder_cls():
-        _, _, builder_cls = get_pipefy_runtime_components()
-        return builder_cls
-
-    @staticmethod
-    def _client():
-        client_cls, _, _ = get_pipefy_runtime_components()
-        return client_cls(
-            endpoint=PIPEFY_GRAPHQL_ENDPOINT,
-            token=PIPEFY_TOKEN,
-            timeout=PIPEFY_GRAPHQL_TIMEOUT_SECONDS,
-        )
-
-    @staticmethod
-    def _raise_if_pipefy_errors(normalized: dict):
-        errors = normalized.get("errors", [])
-        if errors:
-            first_error = errors[0] if isinstance(errors[0], dict) else {"message": str(errors[0])}
-            raise ValueError(first_error.get("message", "Pipefy error"))
 
     def create_card(
         self,
@@ -135,7 +103,7 @@ class CardsService:
         current_phase_id = current_phase.get("id") if isinstance(current_phase, dict) else None
 
         phases_query, phases_variables = builder.fetch_pipe_phases(
-            FetchPipePhasesInput(pipe_id=PIPE_ID)
+            FetchPipePhasesInput()
         )
         phases_result = self._normalize_response(client.execute(phases_query, phases_variables))
         phases = ((phases_result.get("data") or {}).get("pipe") or {}).get("phases") or []

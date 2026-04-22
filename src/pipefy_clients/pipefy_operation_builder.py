@@ -4,6 +4,7 @@ from src.gql_response_mappers.dtos.cards import (
     CreateCardInput,
     DeleteCardInput,
     FetchPipePhasesInput,
+    FetchTableRecordsInput,
     MoveCardToPhaseInput,
 )
 
@@ -12,9 +13,10 @@ class PipefyOperationBuilder:
     @staticmethod
     def create_card(payload: CreateCardInput) -> tuple[str, dict[str, Any]]:
         query = """
-        mutation CreateCard($pipeId: ID!, $fieldsAttributes: [FieldValueInput!]!) {
+        mutation CreateCard($pipeId: ID!, $phaseId: ID, $fieldsAttributes: [FieldValueInput!]!) {
           createCard(input: {
             pipe_id: $pipeId,
+            phase_id: $phaseId,
             fields_attributes: $fieldsAttributes
           }) {
             card {
@@ -34,6 +36,7 @@ class PipefyOperationBuilder:
         """
         variables = {
           "pipeId": payload.pipe_id,
+          "phaseId": payload.phase_id,
           "fieldsAttributes": payload.fields_attributes,
         }
         return query, variables
@@ -90,4 +93,21 @@ class PipefyOperationBuilder:
         }
         """
         variables = {"pipeId": payload.pipe_id}
+        return query, variables
+
+    @staticmethod
+    def fetch_table_records(payload: FetchTableRecordsInput) -> tuple[str, dict[str, Any]]:
+        query = """
+        query FetchTableRecords($tableId: ID!) {
+          table_records(table_id: $tableId, first: 50) {
+            edges {
+              node {
+                id
+                title
+              }
+            }
+          }
+        }
+        """
+        variables = {"tableId": payload.table_id}
         return query, variables

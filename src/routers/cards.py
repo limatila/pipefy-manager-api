@@ -10,7 +10,7 @@ from src.dtos.cards import (
     CardMoveRequest,
     CardMoveResponse,
 )
-from src.models.persons import ApiPerson
+from src.models.api_persons import ApiPerson
 from src.services.cards_service import CardsService
 
 router = APIRouter(prefix="/card", tags=["Card Management"])

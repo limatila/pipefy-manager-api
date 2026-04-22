@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from .core.database import database_manager
 from .core.config import IS_CREATE_DEMO_API_STARTUP, PIPE_ID
-from .routers import cards_router
+from .routers import cards_router, cities_router, phases_router
 
 
 @asynccontextmanager
@@ -26,6 +26,8 @@ app = FastAPI(title="Pipefy Manager API", lifespan=lifespan, description=app_des
 
 #* Routers
 app.include_router(cards_router)
+app.include_router(cities_router)
+app.include_router(phases_router)
 
 if __name__ == "__main__":
     import uvicorn

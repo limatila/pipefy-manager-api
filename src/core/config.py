@@ -9,12 +9,12 @@ load_dotenv('.env')
 #* PIPEFY
 PIPEFY_TOKEN = getenv("PIPEFY_TOKEN")
 PIPE_ID = getenv("PIPE_ID")
+CIDADE_TABLE_ID = getenv("CIDADE_TABLE_ID")
 
 PIPEFY_GRAPHQL_ENDPOINT = "https://api.pipefy.com/graphql"
 PIPEFY_GRAPHQL_TIMEOUT_SECONDS = float(
 	getenv("PIPEFY_GRAPHQL_TIMEOUT_SECONDS", "30"),
 )
-
 
 #* SQLModel
 DB_URL = getenv("DB_URL", "sqlite:///./db.sqlite")

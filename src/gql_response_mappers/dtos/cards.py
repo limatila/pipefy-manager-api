@@ -6,6 +6,10 @@ from pydantic import (
     Field
 )
 
+from src.core.config import (
+    CIDADE_TABLE_ID, PIPE_ID
+)
+
 
 class GraphQLResult(PydanticBaseModel):
     data: Optional[dict[str, Any]] = None
@@ -29,4 +33,8 @@ class MoveCardToPhaseInput(PydanticBaseModel):
 
 
 class FetchPipePhasesInput(PydanticBaseModel):
-    pipe_id: str
+    pipe_id: str = PIPE_ID
+
+
+class FetchTableRecordsInput(PydanticBaseModel):
+    table_id: str = CIDADE_TABLE_ID

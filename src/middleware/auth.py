@@ -3,7 +3,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlmodel import Session, select
 
 from src.core.database import get_db_session
-from src.models.persons import ApiPerson
+from src.models.api_persons import ApiPerson
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
