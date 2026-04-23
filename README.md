@@ -13,12 +13,10 @@ A simple management REST api with integration to Pipefy, as a IT challenge. Shou
 git clone https://github.com/limatila/pipefy-manager-api.git
 ```
 
-```
-1. Install the dependencies using pip:
+2. Install the dependencies using pip:
 ```bash
 pip install -r requirements.txt
 ```
-
 
 - Optionally, use venv:
 ```bash
@@ -34,7 +32,7 @@ uv sync
 
 
 
-1. configure a .env file to set the PIPEFY_TOKEN and PIPE_ID variables, as shown in example:
+3. configure a .env file to set the PIPEFY_TOKEN and PIPE_ID variables, as shown in example:
 ```env
 # Pipefy Identification
 PIPEFY_TOKEN=SECRET_TOKEN
